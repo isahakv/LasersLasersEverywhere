@@ -12,9 +12,9 @@ public class LaserObsorber : Item, IObstacle
 	public Action OnObjectChanged { get; set; }
 	public Action<bool> OnActiveStateChanged;
 
-	public override void SetColor(Color newColor)
+	public override void SetColor(Color[] inputColors, Color[] outputColors)
 	{
-		requiredLaserColor = newColor;
+		requiredLaserColor = inputColors[0];
 		GetComponentInChildren<Renderer>().material.color = requiredLaserColor;
 		GetComponentInChildren<Renderer>().material.SetColor("_EmissionColor", Color.black);
 	}

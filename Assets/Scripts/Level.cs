@@ -10,22 +10,32 @@ public enum PlatformType
 }
 
 [System.Serializable]
+public struct ItemData
+{
+	public ItemType type;
+	public Color[] inputColors, outputColors;
+	public Vector3 direction;
+
+	/*public ItemData()
+	{
+		type = ItemType.None;
+		direction = Vector3.forward;
+	}*/
+}
+
+[System.Serializable]
 public class Platform
 {
 	public int row, column;
 	public PlatformType type;
-	// public bool canPlaceItem;
-	public ItemType itemType;
-	public Color color;
-	public Vector3 direction;
+	public ItemData itemData;
 
 	public Platform(int _row, int _column)
 	{
 		row = _row;
 		column = _column;
 		type = PlatformType.None;
-		color = Color.white;
-		direction = Vector3.forward;
+		itemData = new ItemData();
 	}
 }
 

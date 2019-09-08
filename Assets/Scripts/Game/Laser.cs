@@ -9,7 +9,7 @@ public class Laser : MonoBehaviour, IObstacle
 	static float maxLaserLength = 10f;
 	static float laserSpeed = 1.0f;
 
-	public GameObject laserHitEffect;
+	public ParticleSystem[] laserHitEffects;
 	public Color color;
 	public IObstacle causerObstacle, hittedObstacle;
 	public GameObject hittedObstacleGO;
@@ -32,8 +32,12 @@ public class Laser : MonoBehaviour, IObstacle
 	public void Init(Color _color, Vector3 _startPos, Vector3 _direction, IObstacle _causerObstacle, Laser[] _parents)
 	{
 		lineRenderer.endColor = lineRenderer.startColor = color = _color;
-		ParticleSystem.MainModule particleMain = laserHitEffect.GetComponent<ParticleSystem>().main;
-		particleMain.startColor = color;
+		foreach (ParticleSystem effect in laserHitEffects)
+		{
+			ParticleSystem.MainModule particleMain = effect.main;
+			particleMain.startColor = color;
+		}
+		
 
 		causerObstacle = _causerObstacle;
 		parents = new List<Laser>();
@@ -180,6 +184,7 @@ public class Laser : MonoBehaviour, IObstacle
 			SetHittedObstacle(null);
 			// Notify the obstacle, that this laser hitted him.
 			obstacle.OnLaserHitted(this, hitPoint, hitNormal);
+			EnableHitEffects(hitNormal);
 
 			SetHittedObstacle(obstacle);
 		}
@@ -335,6 +340,7 @@ public class Laser : MonoBehaviour, IObstacle
 			return;
 
 		Debug.Log("OnObstacleChanged: " + color.ToString());
+		DisableHitEffects();
 		RemoveChildren();
 		DrawLaser(true, true);
 	}
@@ -396,7 +402,7 @@ public class Laser : MonoBehaviour, IObstacle
 		return false;
 	}
 
-	/*private bool IsParent(Laser parent)
+	private bool IsParent(Laser parent)
 	{
 		if (parents.Count == 0)
 			return false;
@@ -417,24 +423,6 @@ public class Laser : MonoBehaviour, IObstacle
 		return false;
 	}
 
-	private bool IsHittedObstacleOfParent(IObstacle obstacle)
-	{
-		if (parents.Count == 0)
-			return false;
-
-		for (int i = parents.Count - 1; i >= 0; i--)
-		{
-			if (parents[i] == null)
-			{
-				parents.RemoveAt(i);
-				continue;
-			}
-			if (parents[i].hittedObstacle == obstacle)
-				return true;
-		}
-		return false;
-	}*/
-
 	private void RemoveChildren()
 	{
 		if (children.Count == 0)
@@ -453,15 +441,20 @@ public class Laser : MonoBehaviour, IObstacle
 		children.Clear();
 	}
 
-	private void EnableHitEffects()
+	private void EnableHitEffects(Vector3 direction)
 	{
-		laserHitEffect.SetActive(true);
-		laserHitEffect.transform.position = lineRenderer.GetPosition(0);
+		foreach (ParticleSystem effect in laserHitEffects)
+		{
+			effect.transform.position = lineRenderer.GetPosition(1);
+			effect.transform.forward = direction;
+			effect.gameObject.SetActive(true);
+		}
 	}
 
 	private void DisableHitEffects()
 	{
-		// laserHitEffect.SetActive(false);
+		foreach (ParticleSystem effect in laserHitEffects)
+			effect.gameObject.SetActive(false);
 	}
 
 	private void OnDestroy()

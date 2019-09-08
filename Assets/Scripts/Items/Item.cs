@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public enum ItemType
 {
 	None,
 	Reflector,
+	LaserSplitter,
 	LaserBeamer,
 	LaserAbsorber
 }
@@ -14,9 +13,8 @@ public class Item : MonoBehaviour, IInteractible
 {
 	public ItemType itemType;
 	public bool isInteractible;
-	bool flip = false;
 
-	public virtual void SetColor(Color newColor) { }
+	public virtual void SetColor(Color[] inputColors, Color[] outputColors) { }
 
 	public bool IsInteractible()
 	{
@@ -25,17 +23,7 @@ public class Item : MonoBehaviour, IInteractible
 
 	public virtual void RotateItem()
 	{
-		/*if (transform.rotation.eulerAngles.y <= -45)
-			transform.rotation = Quaternion.Euler(0, 45, 0);
-		else
-			transform.rotation = Quaternion.Euler(0, -45, 0);*/
-
-		if (flip)
-			transform.Rotate(0f, 90f, 0f);
-		else
-			transform.Rotate(0f, -90f, 0f);
-
-		flip = !flip;
+		transform.Rotate(0f, 90f, 0f);
 	}
 
 	public virtual void RemoveItem()

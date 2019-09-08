@@ -16,6 +16,7 @@ public class LevelEditor : EditorWindow
 	int selectedGridIdx;
 	Platform currentPlatform;
 	public InventoryItem[] inventoryItems;
+	public Color[] inputColors, outputColors;
 
 	private GUIStyle headerStyle = new GUIStyle();
 
@@ -98,6 +99,8 @@ public class LevelEditor : EditorWindow
 		{
 			selectedGridIdx = newSelectedGridIdx;
 			currentPlatform = GetPlatformAtIdx(newSelectedGridIdx);
+			inputColors = currentPlatform.itemData.inputColors;
+			outputColors = currentPlatform.itemData.outputColors;
 		}
 
 		EditorGUILayout.EndVertical();
@@ -113,22 +116,30 @@ public class LevelEditor : EditorWindow
 		// Handle Platform Part.
 		EditorGUIUtility.labelWidth = 100f;
 		PlatformType platformType = (PlatformType)EditorGUILayout.EnumPopup("Platform Type", currentPlatform.type);
-		ItemType itemType = currentPlatform.itemType;
+		ItemType itemType = currentPlatform.itemData.type;
 		if (currentPlatform.type == PlatformType.Empty)
 		{
 			// Handle Platfrom Item Part.
-			itemType = (ItemType)EditorGUILayout.EnumPopup("Item Type", currentPlatform.itemType);
+			itemType = (ItemType)EditorGUILayout.EnumPopup("Item Type", currentPlatform.itemData.type);
 			if (itemType != ItemType.None)
 			{
-				currentPlatform.color = EditorGUILayout.ColorField("Item Color ", currentPlatform.color);
-				currentPlatform.direction = EditorGUILayout.Vector3Field("Item Direction ", currentPlatform.direction);
+				SerializedObject so = new SerializedObject(this);
+				SerializedProperty inputColorsProperty = so.FindProperty("inputColors");
+				SerializedProperty outputColorsProperty = so.FindProperty("outputColors");
+				EditorGUILayout.PropertyField(inputColorsProperty, true);
+				EditorGUILayout.PropertyField(outputColorsProperty, true);
+				so.ApplyModifiedProperties();
+
+				currentPlatform.itemData.inputColors = inputColors;
+				currentPlatform.itemData.outputColors = outputColors;
+				currentPlatform.itemData.direction = EditorGUILayout.Vector3Field("Item Direction ", currentPlatform.itemData.direction);
 			}
 		}
 
-		if (platformType != currentPlatform.type || currentPlatform.itemType != itemType)
+		if (platformType != currentPlatform.type || currentPlatform.itemData.type != itemType)
 		{
 			currentPlatform.type = platformType;
-			currentPlatform.itemType = itemType;
+			currentPlatform.itemData.type = itemType;
 			UpdateGridText(currentPlatform.row, currentPlatform.column);
 		}
 
@@ -225,8 +236,8 @@ public class LevelEditor : EditorWindow
 		string text;
 		if (platform.type == PlatformType.None)
 			text = "";
-		else if (platform.type == PlatformType.Empty && platform.itemType != ItemType.None)
-			text = platform.itemType.ToString();
+		else if (platform.type == PlatformType.Empty && platform.itemData.type != ItemType.None)
+			text = platform.itemData.type.ToString();
 		else
 			text = platform.type.ToString();
 
@@ -285,6 +296,7 @@ public class LevelEditor : EditorWindow
 			{
 				InitGrid(openedLevel.map);
 				inventoryItems = openedLevel.inventory.GetItems();
+
 				openedLevelFilePath = relativeLevelPath;
 				UpdateWindowTitle();
 			}

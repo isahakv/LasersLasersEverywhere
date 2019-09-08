@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 5972155401968072395}
   - component: {fileID: 7585829613485630947}
   - component: {fileID: 6239670576676679075}
-  - component: {fileID: 4360209868782607003}
   m_Layer: 8
   m_Name: Cube
   m_TagString: Untagged
@@ -93,18 +92,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &4360209868782607003
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 308923078243075424}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 40388645ea8f1fc488feb0d539cf4549, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &4572185558191304777
 GameObject:
   m_ObjectHideFlags: 0
@@ -114,6 +101,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4572185558191304780}
+  - component: {fileID: 3897314331729605770}
   m_Layer: 8
   m_Name: LaserBlock
   m_TagString: Untagged
@@ -136,3 +124,15 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3897314331729605770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4572185558191304777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40388645ea8f1fc488feb0d539cf4549, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

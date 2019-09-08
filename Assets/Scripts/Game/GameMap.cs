@@ -59,17 +59,17 @@ public class GameMap : MonoBehaviour
 			Vector3 pos = new Vector3(columnIdx, 0f, -rowIdx);
 			GameObject platformGO = Instantiate(GetPlatformPrefab(platform.type), pos, Quaternion.identity, transform);
 			// Place Item onto Platform.
-			if (platform.itemType != ItemType.None)
+			if (platform.itemData.type != ItemType.None)
 			{
 				IPlaceable placeable = platformGO.GetComponent<IPlaceable>();
 				if (placeable == null)
 					return;
-				Item item = Instantiate(GetItemPrefab(platform.itemType), pos, Quaternion.identity, transform);
-				item.transform.forward = platform.direction;
-				item.SetColor(platform.color);
-				if (platform.itemType == ItemType.LaserBeamer)
+				Item item = Instantiate(GetItemPrefab(platform.itemData.type), pos, Quaternion.identity, transform);
+				item.transform.forward = platform.itemData.direction;
+				item.SetColor(platform.itemData.inputColors, platform.itemData.outputColors);
+				if (platform.itemData.type == ItemType.LaserBeamer)
 					laserBeamers.Add((LaserBeamer)item);
-				else if (platform.itemType == ItemType.LaserAbsorber)
+				else if (platform.itemData.type == ItemType.LaserAbsorber)
 				{
 					((LaserObsorber)item).OnActiveStateChanged += OnObsorberActiveStateChanged;
 					laserObsorbers.Add((LaserObsorber)item);

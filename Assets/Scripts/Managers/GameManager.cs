@@ -74,7 +74,6 @@ public class GameManager : MonoBehaviour
 	private void LevelCompleted()
 	{
 		UIManager.Instance.SwitchMenu(MenuType.LevelCompleteMenu);
-		// TODO: Load Next Level...
 	}
 
 	public void OnObjectInteracted(IInteractible interactible)
@@ -115,15 +114,4 @@ public class GameManager : MonoBehaviour
 		placeable.SetPlacedItem(item);
 		UIManager.Instance.UpdateHUD(inventory);
 	}
-
-	/*public GameObject PlaceSelectedItem(Vector3 pos)
-	{
-		InventoryItem item = inventory.GetItem(ItemType.Reflector);
-		if (item.count == 0)
-			return null;
-
-		item.count--;
-		UIManager.Instance.UpdateHUD(inventory);
-		return gameMap.SpawnItem(ItemType.Reflector, pos);
-	}*/
 }

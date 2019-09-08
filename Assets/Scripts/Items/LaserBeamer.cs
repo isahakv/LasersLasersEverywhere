@@ -8,9 +8,9 @@ public class LaserBeamer : Item, IObstacle
 	public Color laserColor;
 	public Action OnObjectChanged { get; set; }
 
-	public override void SetColor(Color newColor)
+	public override void SetColor(Color[] inputColors, Color[] outputColors)
 	{
-		laserColor = newColor;
+		laserColor = outputColors[0];
 		GetComponentInChildren<Renderer>().material.color = laserColor;
 		GetComponentInChildren<Renderer>().material.SetColor("_EmissionColor", Color.black);
 	}

@@ -5,12 +5,12 @@ using UnityEngine;
 [System.Serializable]
 public class InventoryItem
 {
-	public ItemType type;
+	public ItemType itemType;
 	public int count;
 
-	public InventoryItem(ItemType _type, int _count)
+	public InventoryItem(ItemType _itemType, int _count)
 	{
-		type = _type;
+		itemType = _itemType;
 		count = _count;
 	}
 }
@@ -19,22 +19,24 @@ public class InventoryItem
 public class Inventory
 {
 	[SerializeField]
-	List<InventoryItem> items;
+	InventoryItem[] items;
 
-	public Inventory(InventoryItem[] _items = null)
+	public Inventory(InventoryItem[] _items)
 	{
-		items = new List<InventoryItem>();
-		if (_items == null)
-			return;
-		foreach (InventoryItem item in _items)
-			items.Add(item);
+		items = _items;
+		// if (_items == null)
+		// 	return;
+		// foreach (InventoryItem item in _items)
+		// 	items.Add(item);
 	}
 
 	public Inventory Copy()
 	{
-		Inventory inv = new Inventory();
-		foreach (InventoryItem item in items)
-			inv.items.Add(new InventoryItem(item.type, item.count));
+		InventoryItem[] _items = new InventoryItem[items.Length];
+		for (int i = 0; i < items.Length; i++)
+			_items[i] = new InventoryItem(items[i].itemType, items[i].count);
+
+		Inventory inv = new Inventory(_items);
 		return inv;
 	}
 
@@ -42,7 +44,7 @@ public class Inventory
 	{
 		foreach (InventoryItem item in items)
 		{
-			if (item.type == type)
+			if (item.itemType == type)
 				return item;
 		}
 		return null;
@@ -50,6 +52,6 @@ public class Inventory
 
 	public InventoryItem[] GetItems()
 	{
-		return items.ToArray();
+		return items;
 	}
 }

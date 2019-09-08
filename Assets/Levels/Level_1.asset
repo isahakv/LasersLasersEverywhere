@@ -19,64 +19,86 @@ MonoBehaviour:
   - row: 0
     column: 0
     type: 1
-    itemType: 0
-    color: {r: 1, g: 1, b: 1, a: 1}
-    direction: {x: 0, y: 0, z: 1}
+    itemData:
+      type: 0
+      inputColors: []
+      outputColors: []
+      direction: {x: 0, y: 0, z: 1}
   - row: 0
     column: 3
     type: 1
-    itemType: 0
-    color: {r: 0, g: 0, b: 1, a: 1}
-    direction: {x: -1, y: 0, z: 0}
+    itemData:
+      type: 0
+      inputColors: []
+      outputColors: []
+      direction: {x: 0, y: 0, z: 1}
   - row: 0
     column: 4
     type: 1
-    itemType: 0
-    color: {r: 1, g: 1, b: 1, a: 1}
-    direction: {x: 0, y: 0, z: 1}
+    itemData:
+      type: 0
+      inputColors: []
+      outputColors: []
+      direction: {x: 0, y: 0, z: 1}
   - row: 1
     column: 1
     type: 2
-    itemType: 0
-    color: {r: 1, g: 1, b: 1, a: 1}
-    direction: {x: 0, y: 0, z: 1}
+    itemData:
+      type: 0
+      inputColors: []
+      outputColors: []
+      direction: {x: 0, y: 0, z: 1}
   - row: 1
     column: 3
     type: 1
-    itemType: 0
-    color: {r: 1, g: 1, b: 1, a: 1}
-    direction: {x: 0, y: 0, z: 1}
+    itemData:
+      type: 0
+      inputColors: []
+      outputColors: []
+      direction: {x: 0, y: 0, z: 1}
   - row: 2
     column: 3
     type: 1
-    itemType: 3
-    color: {r: 1, g: 0, b: 0, a: 1}
-    direction: {x: 0, y: 0, z: 1}
+    itemData:
+      type: 0
+      inputColors: []
+      outputColors: []
+      direction: {x: 0, y: 0, z: 1}
   - row: 3
     column: 3
     type: 1
-    itemType: 0
-    color: {r: 1, g: 1, b: 1, a: 1}
-    direction: {x: 0, y: 0, z: 1}
+    itemData:
+      type: 0
+      inputColors: []
+      outputColors: []
+      direction: {x: 0, y: 0, z: 1}
   - row: 4
     column: 0
     type: 1
-    itemType: 2
-    color: {r: 1, g: 0, b: 0, a: 1}
-    direction: {x: 0, y: 0, z: 1}
+    itemData:
+      type: 4
+      inputColors:
+      - {r: 1, g: 0, b: 0, a: 1}
+      outputColors: []
+      direction: {x: 0, y: 0, z: 1}
   - row: 4
     column: 3
     type: 2
-    itemType: 0
-    color: {r: 1, g: 1, b: 1, a: 1}
-    direction: {x: 0, y: 0, z: 1}
+    itemData:
+      type: 0
+      inputColors: []
+      outputColors: []
+      direction: {x: 0, y: 0, z: 1}
   - row: 4
     column: 4
-    type: 2
-    itemType: 0
-    color: {r: 1, g: 1, b: 1, a: 1}
-    direction: {x: 0, y: 0, z: 1}
+    type: 1
+    itemData:
+      type: 3
+      inputColors: []
+      outputColors:
+      - {r: 1, g: 0, b: 0, a: 1}
+      direction: {x: 0, y: 0, z: 1}
   inventory:
     items:
-    - type: 1
+    - itemType: 1
       count: 3

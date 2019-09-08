@@ -29,7 +29,7 @@ namespace UI
 			InventoryItem[] items = inventory.GetItems();
 			for (int i = 0; i < items.Length; i++)
 			{
-				ItemButtonUI itemBtn = GetInvItemButtonPrefab(items[i].type);
+				ItemButtonUI itemBtn = GetInvItemButtonPrefab(items[i].itemType);
 				ItemButtonUI itemBtnInstance = Instantiate(itemBtn, inventoryPanel.transform);
 				itemBtnInstance.SetItemCount(items[i].count);
 				invItemButtons.Add(itemBtnInstance);
@@ -78,7 +78,6 @@ namespace UI
 		private void InvItemButtonPressed(int index)
 		{
 			invItemButtons[selectedInvItemButtonIdx].SetActiveState(false);
-			Debug.Log(index);
 			invItemButtons[index].SetActiveState(true);
 			selectedInvItemButtonIdx = index;
 		}
