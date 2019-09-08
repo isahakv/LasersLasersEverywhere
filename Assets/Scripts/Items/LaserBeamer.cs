@@ -15,10 +15,11 @@ public class LaserBeamer : Item, IObstacle
 		GetComponentInChildren<Renderer>().material.SetColor("_EmissionColor", Color.black);
 	}
 
-	public void CalcLaserHitPos(Laser hittedLaser, Vector3 hitPoint, Vector3 hitNormal, out Vector3 hitPointOut, out Vector3 hitNormalOut)
+	public bool CalcLaserHitPos(Laser hittedLaser, Vector3 hitPoint, Vector3 hitNormal, out Vector3 hitPointOut, out Vector3 hitNormalOut)
 	{
 		hitPointOut = hitPoint;
 		hitNormalOut = hitNormal;
+		return true;
 	}
 
 	public void OnLaserHitted(Laser hitedLaser, Vector3 hitPoint, Vector3 hitNormal)

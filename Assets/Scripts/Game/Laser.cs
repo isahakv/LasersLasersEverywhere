@@ -5,19 +5,20 @@ using UnityEngine;
 
 public class Laser : MonoBehaviour, IObstacle
 {
-	static float laserIntersectionThreshold = 0.1f;
+	static float laserParallelThreshold = 0.1f;
 	static float maxLaserLength = 10f;
 	static float laserSpeed = 1.0f;
 
 	public GameObject laserHitEffect;
 	public Color color;
-	public IObstacle hittedObstacle;
+	public IObstacle causerObstacle, hittedObstacle;
 	public GameObject hittedObstacleGO;
 	public List<Laser> parents, children;
 	public bool IsDrawing { get; private set; }
-
+	/** Components */
 	LineRenderer lineRenderer;
 	CapsuleCollider capsuleCollider;
+	/** Coroutines */
 	Coroutine laserRaycastCoroutine, laserDrawCoroutine;
 
 	public Action OnObjectChanged { get; set; }
@@ -28,12 +29,13 @@ public class Laser : MonoBehaviour, IObstacle
 		capsuleCollider = GetComponent<CapsuleCollider>();
 	}
 
-	public void Init(Color _color, Vector3 _startPos, Vector3 _direction, Laser[] _parents)
+	public void Init(Color _color, Vector3 _startPos, Vector3 _direction, IObstacle _causerObstacle, Laser[] _parents)
 	{
 		lineRenderer.endColor = lineRenderer.startColor = color = _color;
 		ParticleSystem.MainModule particleMain = laserHitEffect.GetComponent<ParticleSystem>().main;
 		particleMain.startColor = color;
 
+		causerObstacle = _causerObstacle;
 		parents = new List<Laser>();
 		children = new List<Laser>();
 		if (_parents != null)
@@ -88,6 +90,14 @@ public class Laser : MonoBehaviour, IObstacle
 		return lineRenderer.GetPosition(1);
 	}
 
+	private void OrderHitsByDistance(ref RaycastHit[] hits)
+	{
+		Array.Sort(hits, delegate (RaycastHit hit1, RaycastHit hit2)
+		{
+			return hit1.distance.CompareTo(hit2.distance);
+		});
+	}
+
 	private RaycastHit[] RaycastLaser()
 	{
 		gameObject.layer = 2; // Ignore self in raycast.
@@ -95,12 +105,14 @@ public class Laser : MonoBehaviour, IObstacle
 		ChangeParentsRaycastLayer(2, false); // Ignore direct parents in raycast.
 
 		int layerMask = 1 << LayerMask.NameToLayer("Obstacle") | 1 << LayerMask.NameToLayer("Laser");
-		RaycastHit[] hit = Physics.RaycastAll(transform.position, transform.forward, maxLaserLength, layerMask);
+		RaycastHit[] hits = Physics.RaycastAll(transform.position, transform.forward, maxLaserLength, layerMask);
 		// ReEnable.
 		gameObject.layer = 9;
 		ChangeChildrenRaycastLayer(9, true);
 		ChangeParentsRaycastLayer(9, false);
-		return hit;
+		// Ordering hits by hit distance.
+		OrderHitsByDistance(ref hits);
+		return hits;
 	}
 
 	private void DrawLaser(bool forceDraw = false, bool waitForFixedUpdate = false)
@@ -116,19 +128,10 @@ public class Laser : MonoBehaviour, IObstacle
 			yield return new WaitForFixedUpdate();
 
 		RaycastHit[] hits = RaycastLaser();
-		IObstacle obstacle;
-		Vector3 hitPoint, hitNormal;
-		List<Laser> dirtyLasers;
-		CalcDestination(hits, out obstacle, out hitPoint, out hitNormal, out dirtyLasers);
+		CalcDestination(hits, out IObstacle obstacle, out Vector3 hitPoint, out Vector3 hitNormal);
 		if (forceDraw || hittedObstacle != obstacle)
 		{
 			SetDestinationPos(hitPoint);
-			// Redraw dirty lasers.
-			if (dirtyLasers.Count > 0)
-			{
-				foreach (Laser laser in dirtyLasers)
-					laser.DrawLaser(false, true);
-			}
 
 			if (laserDrawCoroutine != null)
 				StopCoroutine(laserDrawCoroutine);
@@ -136,62 +139,23 @@ public class Laser : MonoBehaviour, IObstacle
 		}
 	}
 
-	private void OrderHitsByDistance(ref RaycastHit[] hits)
+	private void CalcDestination(RaycastHit[] hits, out IObstacle obstacle, out Vector3 hitPoint, out Vector3 hitNormal)
 	{
-		Array.Sort(hits, delegate (RaycastHit hit1, RaycastHit hit2)
-		{
-			return hit1.distance.CompareTo(hit2.distance);
-		});
-	}
-
-	private void CalcDestination(RaycastHit[] hits, out IObstacle obstacle, out Vector3 hitPoint, out Vector3 hitNormal, out List<Laser> dirtyLasers)
-	{
-		OrderHitsByDistance(ref hits);
-
-		dirtyLasers = new List<Laser>();
 		foreach (RaycastHit hit in hits)
 		{
 			obstacle = hit.collider ? hit.collider.GetComponentInParent<IObstacle>() : null;
 			if (obstacle == null)
 				continue;
-
+			
 			// Calculating laser hit position with obstacle.
-			obstacle.CalcLaserHitPos(this, hit.point, hit.normal, out hitPoint, out hitNormal);
-			hitNormal = hit.normal;
-
-			Laser laser = obstacle as Laser;
-			if (laser != null)
+			bool isBlock = obstacle.CalcLaserHitPos(this, hit.point, hit.normal, out hitPoint, out hitNormal);
+			if (isBlock)
 			{
-				Vector3 newDirection = transform.forward + laser.transform.forward;
-				if (newDirection.magnitude < laserIntersectionThreshold)
-					return;
+				Debug.Log("CalcDestination: " + color.ToString());
+				return;
 			}
-
-			if (laser != null && laser.IsDrawing/* && hitNormal.magnitude >= laserIntersectionThreshold*/)
-			{
-				Vector3 otherStartPos = laser.GetStartPos();
-				Vector3 otherEndPos = laser.GetEndPos();
-				float otherMagnitude = Vector3.Distance(otherStartPos, otherEndPos);
-				float otherDistToHitPoint = Vector3.Distance(otherStartPos, hitPoint);
-				// Checking if hit point is on other laser.
-				if (otherMagnitude >= otherDistToHitPoint)
-					return;
-				else
-				{
-					float thisDistance = Vector3.Distance(GetEndPos(), hitPoint);
-					float otherDistance = Vector3.Distance(otherEndPos, hitPoint);
-					// If this laser's distance to hit point is less then other laser's, then set other laser dirty to redraw it.
-					if (thisDistance < otherDistance)
-					{
-						dirtyLasers.Add(laser);
-						continue;
-					}
-					else return;
-				}
-			}
-			else return;
 		}
-
+		// If nothing blocking the laser.
 		obstacle = null;
 		hitPoint = transform.position + transform.forward * maxLaserLength;
 		hitNormal = Vector3.zero;
@@ -204,9 +168,6 @@ public class Laser : MonoBehaviour, IObstacle
 		IsDrawing = true;
 		// Remove any children, if there are.
 		RemoveChildren();
-		// Deleting reference from old hitted obstacle.
-		SetHittedObstacle(null);
-		
 		// Setting new hitted obstacle.
 		SetHittedObstacle(obstacle);
 		// Actually drawing the laser.
@@ -279,23 +240,55 @@ public class Laser : MonoBehaviour, IObstacle
 		}
 	}
 
-	public void CalcLaserHitPos(Laser hittedLaser, Vector3 hitPoint, Vector3 hitNormal, out Vector3 hitPointOut, out Vector3 hitNormalOut)
+	public bool CalcLaserHitPos(Laser hittedLaser, Vector3 hitPoint, Vector3 hitNormal, out Vector3 hitPointOut, out Vector3 hitNormalOut)
 	{
+		// Checking if lasers coming parallel to each other.
 		Vector3 newDirection = transform.forward + hittedLaser.transform.forward;
-		if (newDirection.magnitude < laserIntersectionThreshold)
+		if (newDirection.magnitude < laserParallelThreshold) // If there are parallel.
 		{
 			hitPointOut = (GetEndPos() + hittedLaser.GetEndPos()) / 2f;
-			hitNormalOut = newDirection;
-			return;
+			hitNormalOut = Vector3.zero; // newDirection;
+			return true;
 		}
-		// Finding Intersection Point.
-		LineLineIntersection(out Vector3 intersection, transform.position, transform.forward, hittedLaser.transform.position, hittedLaser.transform.forward);
-		hitPointOut = intersection;
-		hitNormalOut = hitNormal;
+		else // If not, than find they intersection point.
+		{
+			// Finding Intersection Point.
+			LineLineIntersection(out Vector3 intersection, transform.position, transform.forward, hittedLaser.transform.position, hittedLaser.transform.forward);
+			hitPointOut = intersection;
+			hitNormalOut = hitNormal;
+			// If hitted laser is already this laser's hitted obstacle, then don't block.
+			if ((hittedLaser as IObstacle) == hittedObstacle)
+				return false;
+
+			if (IsDrawing)
+			{
+				float laserLength = Vector3.Distance(GetStartPos(), GetEndPos());
+				float distToHitPoint = Vector3.Distance(GetStartPos(), hitPoint);
+				// Checking if hit point is in this laser.
+				if (laserLength >= distToHitPoint)
+					return true;
+				else // Else Checking if this laser is nearer to hitpoint then other.
+				{
+					float thisDistance = Vector3.Distance(GetEndPos(), hitPoint);
+					float otherDistance = Vector3.Distance(hittedLaser.GetEndPos(), hitPoint);
+					if (thisDistance <= otherDistance)
+						return true;
+					else
+					{
+						DrawLaser(false, true);
+						return false;
+					}
+				}
+			}
+			return true;
+		}
 	}
 
 	public void OnLaserHitted(Laser hittedLaser, Vector3 hitPoint, Vector3 hitNormal)
 	{
+		if (IsChild(hittedLaser))
+			return;
+
 		RemoveChildren();
 		SetEndPos(hitPoint);
 		// Setting new hitted Laser to hitted Obstacle.
@@ -303,14 +296,16 @@ public class Laser : MonoBehaviour, IObstacle
 		// Let registered objects know, that this laser changed.
 		OnObjectChanged?.Invoke();
 
+		Debug.Log("OnLaserHitted: " + color.ToString());
+
 		// Creation of new Laser.
-		Vector3 newDirection = (transform.forward + hittedLaser.transform.forward).normalized;
-		if (newDirection.magnitude > laserIntersectionThreshold)
+		if (hitNormal.magnitude > laserParallelThreshold)
 		{
+			Vector3 newDirection = (transform.forward + hittedLaser.transform.forward).normalized;
 			Color newColor = color + hittedLaser.color;
 			newColor.a = 1f;
 			Laser[] parents = { this, hittedLaser };
-			GameManager.Instance.gameMap.SpawnLaser(newColor, hitPoint/* + newDirection * 1f*/, newDirection, parents);
+			GameManager.Instance.gameMap.SpawnLaser(newColor, hitPoint, newDirection, null, parents);
 		}
 	}
 
@@ -318,27 +313,16 @@ public class Laser : MonoBehaviour, IObstacle
 	{
 		Laser laser = other.GetComponentInParent<Laser>();
 		if (laser != null) // Ignore if we collided with laser.
-		{
-			/*Debug.Log("OnTriggerEnter: LASER");
-			Vector3 newDirection = (transform.forward + laser.transform.forward).normalized;
-			if (newDirection.magnitude < laserIntersectionThreshold)
-			{
-				Vector3 hitPos = (GetEndPos() + laser.GetEndPos()) / 2f;
-				SetDestinationPos(hitPos);
-				laser.SetDestinationPos(hitPos);
-				DrawLaser(false, true);
-				// laser.DrawLaser(false, true);
-				Debug.Log("OnTriggerEnter: LASERRRRRRRRRRRRRRRRRRRRRRRR");
-			}*/
 			return;
-		}
 
 		IObstacle obstacle = other.GetComponentInParent<IObstacle>();
-		if (obstacle == null || hittedObstacle == obstacle// || IsChild(laser) || IsParent(laser)
-			|| IsHittedObstacleOfParent(obstacle))
+		if (obstacle == null || causerObstacle == obstacle// || IsChild(laser) || IsParent(laser)
+			|| hittedObstacle == obstacle)//IsHittedObstacleOfParent(obstacle))
 			return;
 
-		Debug.Log("OnTriggerEnter: " + color.ToString() + ", Other: " + other.transform.parent.name);
+		// Debug.Log("OnTriggerEnter: " + color.ToString() + ", Other: " + other.transform.parent.name);
+		if (other.GetComponentInParent<LaserBeamer>())
+		Debug.Log("OnTriggerEnter: " + color.ToString() + ", Other: " + other.GetComponentInParent<LaserBeamer>().laserColor);
 
 		DrawLaser(false, true);
 		// Let registered objects know, that this laser changed.
@@ -412,7 +396,7 @@ public class Laser : MonoBehaviour, IObstacle
 		return false;
 	}
 
-	private bool IsParent(Laser parent)
+	/*private bool IsParent(Laser parent)
 	{
 		if (parents.Count == 0)
 			return false;
@@ -449,7 +433,7 @@ public class Laser : MonoBehaviour, IObstacle
 				return true;
 		}
 		return false;
-	}
+	}*/
 
 	private void RemoveChildren()
 	{

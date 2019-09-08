@@ -79,11 +79,11 @@ public class GameMap : MonoBehaviour
 			}
 		}
 		// Spawn Lasers from LaserBeamers.
-		for (int i = 0; i < laserBeamers.Count; i++)
+		foreach (LaserBeamer laserBeamer in laserBeamers)
 		{
-			Vector3 dir = laserBeamers[i].transform.forward.normalized;
-			Vector3 pos = laserBeamers[i].transform.position + dir * 0.5f;
-			SpawnLaser(laserBeamers[i].laserColor, pos + new Vector3(0f, 0.6f, 0f), dir, null);
+			Vector3 dir = laserBeamer.transform.forward.normalized;
+			Vector3 pos = laserBeamer.transform.position + dir * 0.5f;
+			SpawnLaser(laserBeamer.laserColor, pos + new Vector3(0f, 0.6f, 0f), dir, laserBeamer.GetComponent<IObstacle>(), null);
 		}
 	}
 
@@ -95,7 +95,7 @@ public class GameMap : MonoBehaviour
 			DestroyImmediate(transform.GetChild(i).gameObject);
 	}
 
-	public void SpawnLaser(Color color, Vector3 startPoint, Vector3 direction, Laser[] parents)
+	public void SpawnLaser(Color color, Vector3 startPoint, Vector3 direction, IObstacle causerObstacle, Laser[] parents)
 	{
 		Laser laser = Instantiate(laserPrefab, startPoint, Quaternion.LookRotation(direction), transform);
 		if (parents != null)
@@ -103,7 +103,7 @@ public class GameMap : MonoBehaviour
 			for (int i = 0; i < parents.Length; i++)
 				parents[i].AddChild(laser);
 		}
-		laser.Init(color, startPoint, direction, parents);
+		laser.Init(color, startPoint, direction, causerObstacle, parents);
 	}
 
 	public Item SpawnItem(ItemType type, Vector3 pos)

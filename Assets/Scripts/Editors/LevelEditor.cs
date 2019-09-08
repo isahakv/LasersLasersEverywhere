@@ -265,7 +265,11 @@ public class LevelEditor : EditorWindow
 
 	private void CreateLevel()
 	{
+		openedLevelFilePath = "";
+		UpdateWindowTitle();
 		openedLevel = CreateInstance<Level>();
+		inventoryItems = null;
+		InitGrid();
 	}
 
 	private void OpenLevel()
@@ -299,7 +303,7 @@ public class LevelEditor : EditorWindow
 		openedLevel.inventory = new Inventory(inventoryItems);
 
 		// Check if first time save.
-		if (openedLevelFilePath == "")
+		if (string.IsNullOrEmpty(openedLevelFilePath))
 		{
 			openedLevelFilePath = SaveAsNewLevel();
 			UpdateWindowTitle();
@@ -317,7 +321,14 @@ public class LevelEditor : EditorWindow
 			return "";
 
 		string savePath = EditorUtility.SaveFilePanelInProject("Save Level...", "", "asset", "");
-		AssetDatabase.CopyAsset(openedLevelFilePath, savePath);
+		if (string.IsNullOrEmpty(openedLevelFilePath))
+		{
+			openedLevelFilePath = savePath;
+			AssetDatabase.CreateAsset(openedLevel, savePath);
+		}
+		else
+			AssetDatabase.CopyAsset(openedLevelFilePath, savePath);
+			
 		EditorUtility.SetDirty(openedLevel);
 		AssetDatabase.SaveAssets();
 		AssetDatabase.Refresh();
@@ -334,10 +345,12 @@ public class LevelEditor : EditorWindow
 
 	private void UpdateWindowTitle()
 	{
-		if (openedLevelFilePath == "")
-			return;
+		string levelName;
+		if (string.IsNullOrEmpty(openedLevelFilePath))
+			levelName = "Unsaved Level";
+		else
+			levelName = Path.GetFileName(openedLevelFilePath);
 
-		string levelName = Path.GetFileName(openedLevelFilePath);
 		LevelEditor window = GetWindow<LevelEditor>();
 		window.titleContent = new GUIContent("Level Editor - " + levelName);
 	}
