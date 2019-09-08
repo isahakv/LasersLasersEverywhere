@@ -5,9 +5,10 @@ public class LaserBlock : MonoBehaviour, IObstacle
 {
 	public Action OnObjectChanged { get; set; }
 
-	public Vector3 CalcLaserHitPos(Laser hittedLaser, Vector3 hitPoint, Vector3 hitNormal)
+	public void CalcLaserHitPos(Laser hittedLaser, Vector3 hitPoint, Vector3 hitNormal, out Vector3 hitPointOut, out Vector3 hitNormalOut)
 	{
-		return hitPoint;
+		hitPointOut = hitPoint;
+		hitNormalOut = hitNormal;
 	}
 
 	public void OnLaserHitted(Laser hitedLaser, Vector3 hitPoint, Vector3 hitNormal)

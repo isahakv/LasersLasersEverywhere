@@ -19,9 +19,10 @@ public class LaserObsorber : Item, IObstacle
 		GetComponentInChildren<Renderer>().material.SetColor("_EmissionColor", Color.black);
 	}
 
-	public Vector3 CalcLaserHitPos(Laser hittedLaser, Vector3 hitPoint, Vector3 hitNormal)
+	public void CalcLaserHitPos(Laser hittedLaser, Vector3 hitPoint, Vector3 hitNormal, out Vector3 hitPointOut, out Vector3 hitNormalOut)
 	{
-		return hitPoint;
+		hitPointOut = hitPoint;
+		hitNormalOut = hitNormal;
 	}
 
 	public void OnLaserHitted(Laser hittedLaser, Vector3 hitPoint, Vector3 hitNormal)

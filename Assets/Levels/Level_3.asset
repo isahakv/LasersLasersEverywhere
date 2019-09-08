@@ -26,7 +26,7 @@ MonoBehaviour:
     column: 1
     type: 1
     itemType: 2
-    color: {r: 0, g: 1, b: 0.81332016, a: 1}
+    color: {r: 1, g: 0.46619314, b: 0, a: 1}
     direction: {x: 0, y: 0, z: -1}
   - row: 1
     column: 2
@@ -37,9 +37,21 @@ MonoBehaviour:
   - row: 1
     column: 3
     type: 1
-    itemType: 0
+    itemType: 2
     color: {r: 1, g: 0, b: 0.7354884, a: 1}
     direction: {x: 0, y: 0, z: -1}
+  - row: 2
+    column: 1
+    type: 1
+    itemType: 0
+    color: {r: 1, g: 1, b: 1, a: 1}
+    direction: {x: 0, y: 0, z: 1}
+  - row: 2
+    column: 3
+    type: 1
+    itemType: 0
+    color: {r: 1, g: 1, b: 1, a: 1}
+    direction: {x: 0, y: 0, z: 1}
   - row: 4
     column: 0
     type: 1

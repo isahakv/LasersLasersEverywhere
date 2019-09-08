@@ -7,16 +7,17 @@ public class LaserReflector : Item, IObstacle
 {
 	public Action OnObjectChanged { get; set; }
 
-	public Vector3 CalcLaserHitPos(Laser hittedLaser, Vector3 hitPoint, Vector3 hitNormal)
+	public void CalcLaserHitPos(Laser hittedLaser, Vector3 hitPoint, Vector3 hitNormal, out Vector3 hitPointOut, out Vector3 hitNormalOut)
 	{
-		return hitPoint;
+		hitPointOut = hitPoint;
+		hitNormalOut = Vector3.Reflect(hittedLaser.transform.forward, hitNormal);
 	}
 
-	public void OnLaserHitted(Laser hitedLaser, Vector3 hitPoint, Vector3 hitNormal)
+	public void OnLaserHitted(Laser hittedLaser, Vector3 hitPoint, Vector3 hitNormal)
 	{
-		Laser[] parent = { hitedLaser };
-		Vector3 direction = Vector3.Reflect(hitedLaser.transform.forward, hitNormal);
-		GameManager.Instance.gameMap.SpawnLaser(hitedLaser.color, hitPoint, direction, parent);
+		Laser[] parent = { hittedLaser };
+		Vector3 direction = Vector3.Reflect(hittedLaser.transform.forward, hitNormal);
+		GameManager.Instance.gameMap.SpawnLaser(hittedLaser.color, hitPoint, direction, parent);
 	}
 
 	public override void RotateItem()
