@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96c63e3b4f9091641994f5f1f23f510c, type: 3}
   m_Name: Level_1
   m_EditorClassIdentifier: 
-  isCompleted: 0
+  isLocked: 0
   gridWidth: 5
   gridHeight: 5
   map:

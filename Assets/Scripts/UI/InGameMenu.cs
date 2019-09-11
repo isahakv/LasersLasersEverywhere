@@ -15,16 +15,11 @@ namespace UI
 			mainMenuButton.onClick.AddListener(MainMenuButtonPressed);
 		}
 
-		protected override void BackButtonPressed()
-		{
-			base.BackButtonPressed();
-			InputController.EnableInput();
-			// GameManager.Instance.ResumeGame();
-		}
-
 		private void ContinueButtonPressed()
 		{
 			UIManager.Instance.SwitchMenu(MenuType.HUD);
+			InputController.EnableInput();
+			// GameManager.Instance.ResumeGame();
 		}
 
 		private void LevelsButtonPressed()

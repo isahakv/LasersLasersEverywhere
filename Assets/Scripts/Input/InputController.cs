@@ -9,6 +9,8 @@ public class InputController : MonoBehaviour
 	public float cameraZoomSpeed, minCameraZoom, maxCameraZoom;
 	
 	Camera mainCamera;
+	Vector2 mousePos;
+	bool haveTouch = false;
 
 	private void Awake()
 	{
@@ -36,22 +38,44 @@ public class InputController : MonoBehaviour
 		isInputEnabled = false;
 	}
 
-	public void TouchHandler()
+	private void RaycastForInteractible()
 	{
+		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+		RaycastHit hit;
+
+		int layerMask = 1 << LayerMask.NameToLayer("Obstacle");
+		if (Physics.Raycast(ray, out hit, 100f, layerMask))
+		{
+			if (hit.collider.transform.parent.GetComponent<IInteractible>() is IInteractible interactible && interactible != null)
+				GameManager.Instance.OnObjectInteracted(interactible);
+			else if (hit.collider.GetComponent<IPlaceable>() is IPlaceable placeable && placeable != null)
+				GameManager.Instance.OnObjectInteracted(placeable);
+		}
+	}
+
+	private void TouchHandler()
+	{
+#if UNITY_EDITOR || UNITY_STANDALONE
 		if (Input.GetMouseButtonDown(0))
 		{
-			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-			RaycastHit hit;
-
-			int layerMask = 1 << LayerMask.NameToLayer("Obstacle");
-			if (Physics.Raycast(ray, out hit, 100f, layerMask))
-			{
-				if (hit.collider.transform.parent.GetComponent<IInteractible>() is IInteractible interactible && interactible != null)
-					GameManager.Instance.OnObjectInteracted(interactible);
-				else if (hit.collider.GetComponent<IPlaceable>() is IPlaceable placeable && placeable != null)
-					GameManager.Instance.OnObjectInteracted(placeable);
-			}
+			haveTouch = true;
+			mousePos = Input.mousePosition;
 		}
+		else if (haveTouch && Input.GetMouseButton(0) && Vector2.Distance(mousePos, Input.mousePosition) > 0.1f)
+			haveTouch = false;
+		else if (haveTouch && Input.GetMouseButtonUp(0))
+			RaycastForInteractible();
+#elif UNITY_ANDROID || UNITY_IOS
+		if (Input.touchCount == 1)
+		{
+			if (Input.GetTouch(0).phase == TouchPhase.Began)
+				haveTouch = true;
+			else if (haveTouch && Input.GetTouch(0).phase == TouchPhase.Moved)
+				haveTouch = false;
+			else if (haveTouch && Input.GetTouch(0).phase == TouchPhase.Ended)
+				RaycastForInteractible();
+		}
+#endif
 	}
 
 	private void CameraMovement()

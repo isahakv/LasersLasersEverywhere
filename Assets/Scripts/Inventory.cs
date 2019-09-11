@@ -24,10 +24,6 @@ public class Inventory
 	public Inventory(InventoryItem[] _items)
 	{
 		items = _items;
-		// if (_items == null)
-		// 	return;
-		// foreach (InventoryItem item in _items)
-		// 	items.Add(item);
 	}
 
 	public Inventory Copy()

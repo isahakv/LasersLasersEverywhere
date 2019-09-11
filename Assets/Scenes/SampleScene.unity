@@ -1999,7 +1999,6 @@ MonoBehaviour:
   inGameMenu: {fileID: 1723068152}
   levelSelectMenu: {fileID: 1344096645}
   levelCompeteMenu: {fileID: 249010099}
-  laserReflectorCountText: {fileID: 0}
 --- !u!4 &754592615
 Transform:
   m_ObjectHideFlags: 0
@@ -4493,10 +4492,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -6205,7 +6204,7 @@ PrefabInstance:
     - target: {fileID: 4144526527338049498, guid: 0707784feea4d3742837ef3adfaed868,
         type: 3}
       propertyPath: m_Name
-      value: LaserSpliter
+      value: LaserSplitter
       objectReference: {fileID: 0}
     - target: {fileID: 4144526527338049503, guid: 0707784feea4d3742837ef3adfaed868,
         type: 3}
@@ -6558,6 +6557,10 @@ PrefabInstance:
     - target: {fileID: 5952445623867894128, guid: 3c3fd1374c3eebb47b98a15f91aa9fec,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 120654418, guid: 3c3fd1374c3eebb47b98a15f91aa9fec, type: 3}
+      propertyPath: SubModule.enabled
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

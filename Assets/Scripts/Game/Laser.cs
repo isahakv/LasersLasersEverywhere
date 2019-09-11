@@ -7,7 +7,7 @@ public class Laser : MonoBehaviour, IObstacle
 {
 	static float laserParallelThreshold = 0.1f;
 	static float maxLaserLength = 10f;
-	static float laserSpeed = 1.0f;
+	static float laserSpeed = 2f;
 
 	public ParticleSystem[] laserHitEffects;
 	public Color color;

@@ -17,10 +17,9 @@ namespace UI
 			base.OpenMenu();
 			level_Buttons = new List<LevelButtonUI>();
 			int levelCount = GameManager.Instance.GetLevelsCount();
-			int currentLvlIdx = GameManager.Instance.GetCurrentLevelIdx();
 			for (int i = 0; i < levelCount; i++)
 			{
-				bool isActiveLvl = i <= currentLvlIdx;
+				bool isActiveLvl = !(GameManager.Instance.IsLevelLocked(i));
 				SpawnLevelButton(i, isActiveLvl);
 			}
 		}

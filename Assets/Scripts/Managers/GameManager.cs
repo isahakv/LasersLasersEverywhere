@@ -8,7 +8,8 @@ public class GameManager : MonoBehaviour
 	public static GameManager Instance { get; private set; }
 	public GameMap gameMap { get; private set; }
 	public GameObject gameMapObject;
-	public Level[] levels;
+	[SerializeField]
+	private Level[] levels = null;
 
 	Inventory inventory;
 	
@@ -38,6 +39,11 @@ public class GameManager : MonoBehaviour
 	public int GetCurrentLevelIdx()
 	{
 		return PlayerPrefs.GetInt("CurrentLvl", 0);
+	}
+
+	public bool IsLevelLocked(int idx)
+	{
+		return levels[idx].isLocked;
 	}
 
 	public void LoadCurrentLevel()
@@ -73,6 +79,9 @@ public class GameManager : MonoBehaviour
 
 	private void LevelCompleted()
 	{
+		int nextLvl = 1 + GetCurrentLevelIdx();
+		if (nextLvl < levels.Length)
+			levels[nextLvl].isLocked = false;
 		UIManager.Instance.SwitchMenu(MenuType.LevelCompleteMenu);
 	}
 

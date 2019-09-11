@@ -15,12 +15,6 @@ public struct ItemData
 	public ItemType type;
 	public Color[] inputColors, outputColors;
 	public Vector3 direction;
-
-	/*public ItemData()
-	{
-		type = ItemType.None;
-		direction = Vector3.forward;
-	}*/
 }
 
 [System.Serializable]
@@ -42,7 +36,7 @@ public class Platform
 [CreateAssetMenu(fileName = "NewLevel", menuName = "Game Level")]
 public class Level : ScriptableObject
 {
-	public bool isCompleted = false;
+	public bool isLocked = true;
 	public int gridWidth, gridHeight;
 	public Platform[] map;
 	public Inventory inventory;

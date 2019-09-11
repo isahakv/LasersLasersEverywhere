@@ -20,7 +20,6 @@ namespace UI
 	{
 		public static UIManager Instance { get; private set; }
 		public BaseMenu hud, mainMenu, settingsMenu, inGameMenu, levelSelectMenu, levelCompeteMenu;
-		public Text laserReflectorCountText;
 
 		BaseMenu currentMenu, previousMenu;
 
