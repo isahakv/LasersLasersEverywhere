@@ -43,7 +43,7 @@ namespace UI
 		private void LevelButtonPressed(int index)
 		{
 			UIManager.Instance.SwitchMenu(MenuType.HUD);
-			InputController.EnableInput();
+			InputController.Instance.EnableInput();
 			GameManager.Instance.LoadLevel(index);
 		}
 	}

@@ -71,7 +71,7 @@ namespace UI
 		private void PauseButtonPressed()
 		{
 			UIManager.Instance.SwitchMenu(MenuType.InGameMenu);
-			InputController.DisableInput();
+			InputController.Instance.DisableInput();
 			// GameManager.Instance.PauseGame();
 		}
 

@@ -21,6 +21,7 @@ public class GameMap : MonoBehaviour
 	public PlatformPrefab[] platformPrefabs;
 	public ItemPrefab[] itemPrefabs;
 	public Laser laserPrefab;
+	public float platformSize = 1f;
 
 	List<LaserBeamer> laserBeamers = new List<LaserBeamer>();
 	List<LaserObsorber> laserObsorbers = new List<LaserObsorber>();
@@ -56,7 +57,7 @@ public class GameMap : MonoBehaviour
 		{
 			int columnIdx = platform.column - mapWidth / 2;
 			int rowIdx = platform.row - mapHeight / 2;
-			Vector3 pos = new Vector3(columnIdx, 0f, -rowIdx);
+			Vector3 pos = new Vector3(columnIdx * platformSize, 0f, -rowIdx * platformSize);
 			GameObject platformGO = Instantiate(GetPlatformPrefab(platform.type), pos, Quaternion.identity, transform);
 			// Place Item onto Platform.
 			if (platform.itemData.type != ItemType.None)
@@ -81,9 +82,9 @@ public class GameMap : MonoBehaviour
 		// Spawn Lasers from LaserBeamers.
 		foreach (LaserBeamer laserBeamer in laserBeamers)
 		{
-			Vector3 dir = laserBeamer.transform.forward.normalized;
-			Vector3 pos = laserBeamer.transform.position + dir * 0.5f;
-			SpawnLaser(laserBeamer.laserColor, pos + new Vector3(0f, 0.6f, 0f), dir, laserBeamer.GetComponent<IObstacle>(), null);
+			Vector3 dir = laserBeamer.laserSpawnPos.forward;
+			Vector3 pos = laserBeamer.laserSpawnPos.position;
+			SpawnLaser(laserBeamer.laserColor, pos, dir, laserBeamer.GetComponent<IObstacle>(), null);
 		}
 	}
 

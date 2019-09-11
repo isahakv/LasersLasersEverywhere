@@ -5,19 +5,22 @@ using UnityEngine;
 
 public class Laser : MonoBehaviour, IObstacle
 {
-	static float laserParallelThreshold = 0.1f;
+	public static float laserParallelThreshold = 0.1f;
 	static float maxLaserLength = 10f;
 	static float laserSpeed = 2f;
 
-	public ParticleSystem[] laserHitEffects;
 	public Color color;
-	public IObstacle causerObstacle, hittedObstacle;
-	public GameObject hittedObstacleGO;
+	public AnimationCurve colorAlphaCurve;
+	public ParticleSystem[] laserHitEffects;
+	public GameObject hittedObstacleGO; // For debugging.
 	public List<Laser> parents, children;
 	public bool IsDrawing { get; private set; }
+
+	IObstacle causerObstacle, hittedObstacle;
 	/** Components */
 	LineRenderer lineRenderer;
 	CapsuleCollider capsuleCollider;
+	Material laserMaterial;
 	/** Coroutines */
 	Coroutine laserRaycastCoroutine, laserDrawCoroutine;
 
@@ -27,6 +30,13 @@ public class Laser : MonoBehaviour, IObstacle
 	{
 		lineRenderer = GetComponent<LineRenderer>();
 		capsuleCollider = GetComponent<CapsuleCollider>();
+		laserMaterial = GetComponent<Renderer>().material;
+	}
+
+	private void Update()
+	{
+		color.a = colorAlphaCurve.Evaluate(Time.time);
+		laserMaterial.SetColor("_TintColor", color);
 	}
 
 	public void Init(Color _color, Vector3 _startPos, Vector3 _direction, IObstacle _causerObstacle, Laser[] _parents)
@@ -50,7 +60,7 @@ public class Laser : MonoBehaviour, IObstacle
 
 		capsuleCollider.enabled = true;
 		SetStartPos(_startPos);
-		SetDestinationPos(_startPos + _direction * 0.1f);
+		SetDestinationPos(_startPos + _direction * 0.1f, true);
 		DrawLaser(true, true);
 	}
 
@@ -76,9 +86,10 @@ public class Laser : MonoBehaviour, IObstacle
 		lineRenderer.SetPosition(1, pos);
 	}
 
-	private void SetDestinationPos(Vector3 pos)
+	private void SetDestinationPos(Vector3 pos, bool changeDirection = false)
 	{
-		transform.forward = pos - transform.position;
+		if (changeDirection)
+			transform.forward = pos - transform.position;
 		float length = (pos - transform.position).magnitude;
 		capsuleCollider.height = length;
 		capsuleCollider.center = new Vector3(0f, 0f, length * 0.5f);
@@ -294,6 +305,9 @@ public class Laser : MonoBehaviour, IObstacle
 		if (IsChild(hittedLaser))
 			return;
 
+		// Disable hit effects
+		DisableHitEffects();
+
 		RemoveChildren();
 		SetEndPos(hitPoint);
 		// Setting new hitted Laser to hitted Obstacle.
@@ -325,9 +339,9 @@ public class Laser : MonoBehaviour, IObstacle
 			|| hittedObstacle == obstacle)//IsHittedObstacleOfParent(obstacle))
 			return;
 
-		// Debug.Log("OnTriggerEnter: " + color.ToString() + ", Other: " + other.transform.parent.name);
-		if (other.GetComponentInParent<LaserBeamer>())
-		Debug.Log("OnTriggerEnter: " + color.ToString() + ", Other: " + other.GetComponentInParent<LaserBeamer>().laserColor);
+		Debug.Log("OnTriggerEnter: " + color.ToString() + ", Other: " + other.transform.parent.name);
+		//if (other.GetComponentInParent<LaserBeamer>())
+		// Debug.Log("OnTriggerEnter: " + color.ToString() + ", Other: " + other.GetComponentInParent<LaserBeamer>().laserColor);
 
 		DrawLaser(false, true);
 		// Let registered objects know, that this laser changed.

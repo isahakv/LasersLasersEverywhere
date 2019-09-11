@@ -19,6 +19,7 @@ namespace UI
 		private void PlayButtonPressed()
 		{
 			UIManager.Instance.SwitchMenu(MenuType.HUD);
+			InputController.Instance.EnableInput();
 			GameManager.Instance.LoadCurrentLevel();
 		}
 

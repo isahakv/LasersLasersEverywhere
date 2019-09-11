@@ -10,16 +10,22 @@ public class LaserObsorber : Item, IObstacle
 	public Action OnObjectChanged { get; set; }
 	public Action<bool> OnActiveStateChanged;
 
+	Material material;
+	Laser hittedLaser;
 	bool isActive = false;
-	Laser laser;
-	public float activeStateChangeCounter = 0f;
+	float activeStateChangeCounter = 0f;
 	Coroutine setActiveStateCoroutine;
+
+	private void Awake()
+	{
+		material = GetComponentInChildren<Renderer>().material;
+	}
 
 	public override void SetColor(Color[] inputColors, Color[] outputColors)
 	{
 		requiredLaserColor = inputColors[0];
-		GetComponentInChildren<Renderer>().material.color = requiredLaserColor;
-		GetComponentInChildren<Renderer>().material.SetColor("_EmissionColor", Color.black);
+		material.color = requiredLaserColor;
+		material.SetColor("_EmissionColor", Color.black);
 	}
 
 	public bool CalcLaserHitPos(Laser hittedLaser, Vector3 hitPoint, Vector3 hitNormal, out Vector3 hitPointOut, out Vector3 hitNormalOut)
@@ -29,21 +35,23 @@ public class LaserObsorber : Item, IObstacle
 		return true;
 	}
 
-	public void OnLaserHitted(Laser hittedLaser, Vector3 hitPoint, Vector3 hitNormal)
+	public void OnLaserHitted(Laser _hittedLaser, Vector3 hitPoint, Vector3 hitNormal)
 	{
-		Debug.Log("OnLaserHitted: Obsorber: " + hittedLaser.color.ToString());
-		if (hittedLaser.color == requiredLaserColor)
+		Debug.Log("OnLaserHitted: Obsorber: " + _hittedLaser.color.ToString());
+		Color color = _hittedLaser.color;
+		color.a = 1f;
+		if (color == requiredLaserColor)
 		{
-			laser = hittedLaser;
-			laser.OnObjectChanged += OnLaserChanged;
+			hittedLaser = _hittedLaser;
+			hittedLaser.OnObjectChanged += OnLaserChanged;
 			SetActiveState(true);
 		}
 	}
 
 	private void OnLaserChanged()
 	{
-		laser.OnObjectChanged -= OnLaserChanged;
-		laser = null;
+		hittedLaser.OnObjectChanged -= OnLaserChanged;
+		hittedLaser = null;
 		SetActiveState(false);
 	}
 
@@ -54,7 +62,7 @@ public class LaserObsorber : Item, IObstacle
 		{
 			float alpha = activeStateChangeCounter / activeStateChangeTime;
 			Color color = Color.Lerp(startColor, endColor, alpha);
-			GetComponentInChildren<Renderer>().material.SetColor("_EmissionColor", color);
+			material.SetColor("_EmissionColor", color);
 
 			activeStateChangeCounter += _isActive ? Time.deltaTime : -Time.deltaTime;
 			yield return null;

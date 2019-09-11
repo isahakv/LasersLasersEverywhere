@@ -1,21 +1,30 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class InputController : MonoBehaviour
 {
-	static bool isInputEnabled = true;
-
+	public static InputController Instance { get; private set; }
 	public Transform cameraTarget;
 	public float cameraRotationSpeed = 1f, minCameraVertAngle = 45f, maxCameraVertAngle = 75f;
 	public float cameraZoomSpeed, minCameraZoom, maxCameraZoom;
 	
 	Camera mainCamera;
 	Vector2 mousePos;
+	bool isInputEnabled = false;
 	bool haveTouch = false;
 
 	private void Awake()
 	{
-		mainCamera = Camera.main;
-		mainCamera.transform.forward = cameraTarget.position - mainCamera.transform.position;
+		if (Instance == null)
+		{
+			DontDestroyOnLoad(this);
+			Instance = this;
+			mainCamera = Camera.main;
+			mainCamera.transform.forward = cameraTarget.position - mainCamera.transform.position;
+		}
+		else if (Instance != this)
+			DestroyImmediate(this);
 	}
 
 	private void Update()
@@ -28,12 +37,18 @@ public class InputController : MonoBehaviour
 		CameraZoom();
 	}
 
-	public static void EnableInput()
+	public void EnableInput()
 	{
+		StartCoroutine(EnableInputCoroutine());
+	}
+
+	private IEnumerator EnableInputCoroutine()
+	{
+		yield return null;
 		isInputEnabled = true;
 	}
 
-	public static void DisableInput()
+	public void DisableInput()
 	{
 		isInputEnabled = false;
 	}
@@ -43,7 +58,7 @@ public class InputController : MonoBehaviour
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		RaycastHit hit;
 
-		int layerMask = 1 << LayerMask.NameToLayer("Obstacle");
+		int layerMask = 1 << LayerMask.NameToLayer("Interactible");
 		if (Physics.Raycast(ray, out hit, 100f, layerMask))
 		{
 			if (hit.collider.transform.parent.GetComponent<IInteractible>() is IInteractible interactible && interactible != null)

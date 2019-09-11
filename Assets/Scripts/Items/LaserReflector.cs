@@ -9,14 +9,26 @@ public class LaserReflector : Item, IObstacle
 
 	public bool CalcLaserHitPos(Laser hittedLaser, Vector3 hitPoint, Vector3 hitNormal, out Vector3 hitPointOut, out Vector3 hitNormalOut)
 	{
-		hitPointOut = hitPoint;
+		Vector3 newDirection = hittedLaser.transform.forward + hitNormal;
+		if (newDirection.magnitude < Laser.laserParallelThreshold) // If there are parallel.
+		{
+			hitPointOut = hitPoint;
+			hitNormalOut = hitNormal;
+			return true;
+		}
+
+		Vector3 pos = transform.position;
+		hitPointOut = new Vector3(pos.x, hitPoint.y, pos.z);
 		hitNormalOut = hitNormal;
-		// hitNormalOut = Vector3.Reflect(hittedLaser.transform.forward, hitNormal);
 		return true;
 	}
 
 	public void OnLaserHitted(Laser hittedLaser, Vector3 hitPoint, Vector3 hitNormal)
 	{
+		Vector3 newDirection = hittedLaser.transform.forward + hitNormal;
+		if (newDirection.magnitude < Laser.laserParallelThreshold) // If there are parallel.
+			return;
+
 		Laser[] parent = { hittedLaser };
 		Vector3 direction = Vector3.Reflect(hittedLaser.transform.forward, hitNormal);
 		GameManager.Instance.gameMap.SpawnLaser(hittedLaser.color, hitPoint, direction, this, parent);

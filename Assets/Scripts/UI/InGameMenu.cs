@@ -18,7 +18,7 @@ namespace UI
 		private void ContinueButtonPressed()
 		{
 			UIManager.Instance.SwitchMenu(MenuType.HUD);
-			InputController.EnableInput();
+			InputController.Instance.EnableInput();
 			// GameManager.Instance.ResumeGame();
 		}
 

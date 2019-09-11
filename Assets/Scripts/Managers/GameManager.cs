@@ -105,8 +105,13 @@ public class GameManager : MonoBehaviour
 
 	public void OnObjectInteracted(IPlaceable placeable)
 	{
-		if (placeable.HavePlacedItem()) // TODO: Rotate Item.
+		// If on placeable already placed item, then call "OnObjectInteracted" for that item.
+		if (placeable.HavePlacedItem())
+		{
+			IInteractible interactible = placeable.GetPlacedItem().GetComponent<IInteractible>();
+			OnObjectInteracted(interactible);
 			return;
+		}
 
 		ItemType selectedItemType = UIManager.Instance.GetSelectedItemType();
 		if (selectedItemType == ItemType.None)
