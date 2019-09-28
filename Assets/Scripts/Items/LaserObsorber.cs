@@ -16,6 +16,9 @@ public class LaserObsorber : Item, IObstacle
 	float activeStateChangeCounter = 0f;
 	Coroutine setActiveStateCoroutine;
 
+	// UI
+	public PercentageBarUI percentageBar;
+
 	private void Awake()
 	{
 		material = GetComponentInChildren<Renderer>().material;
@@ -57,12 +60,17 @@ public class LaserObsorber : Item, IObstacle
 
 	private IEnumerator SetActiveStateCoroutine(bool _isActive)
 	{
+		// Fade In percent bar.
+		percentageBar.FadeIn();
+
 		Color startColor = Color.black, endColor = requiredLaserColor;
 		while ((_isActive && activeStateChangeCounter < activeStateChangeTime) || (!_isActive && activeStateChangeCounter > 0f))
 		{
 			float alpha = activeStateChangeCounter / activeStateChangeTime;
 			Color color = Color.Lerp(startColor, endColor, alpha);
 			material.SetColor("_EmissionColor", color);
+			// Set percent bar value.
+			percentageBar.SetValue(alpha);
 
 			activeStateChangeCounter += _isActive ? Time.deltaTime : -Time.deltaTime;
 			yield return null;
@@ -72,6 +80,9 @@ public class LaserObsorber : Item, IObstacle
 			isActive = _isActive;
 			OnActiveStateChanged?.Invoke(isActive);
 		}
+
+		// Fade Out percent bar.
+		percentageBar.FadeOut();
 	}
 
 	private void SetActiveState(bool _isActive)

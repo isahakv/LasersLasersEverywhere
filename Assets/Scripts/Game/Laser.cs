@@ -6,8 +6,8 @@ using UnityEngine;
 public class Laser : MonoBehaviour, IObstacle
 {
 	public static float laserParallelThreshold = 0.1f;
-	static float maxLaserLength = 10f;
-	static float laserSpeed = 2f;
+	static float maxLaserLength = 30f;
+	static float laserSpeed = 5f;
 
 	public Color color;
 	public AnimationCurve colorAlphaCurve;
@@ -336,12 +336,10 @@ public class Laser : MonoBehaviour, IObstacle
 
 		IObstacle obstacle = other.GetComponentInParent<IObstacle>();
 		if (obstacle == null || causerObstacle == obstacle// || IsChild(laser) || IsParent(laser)
-			|| hittedObstacle == obstacle)//IsHittedObstacleOfParent(obstacle))
+			|| hittedObstacle == obstacle)
 			return;
 
 		Debug.Log("OnTriggerEnter: " + color.ToString() + ", Other: " + other.transform.parent.name);
-		//if (other.GetComponentInParent<LaserBeamer>())
-		// Debug.Log("OnTriggerEnter: " + color.ToString() + ", Other: " + other.GetComponentInParent<LaserBeamer>().laserColor);
 
 		DrawLaser(false, true);
 		// Let registered objects know, that this laser changed.

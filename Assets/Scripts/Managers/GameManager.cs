@@ -17,12 +17,12 @@ public class GameManager : MonoBehaviour
 	{
 		if (Instance == null)
 		{
-			DontDestroyOnLoad(this);
+			DontDestroyOnLoad(gameObject);
 			Instance = this;
 			gameMap = gameMapObject.GetComponent<GameMap>();
 		}
 		else if (Instance != this)
-			DestroyImmediate(this);
+			DestroyImmediate(gameObject);
 	}
 
 	public void ResetGameProgress()

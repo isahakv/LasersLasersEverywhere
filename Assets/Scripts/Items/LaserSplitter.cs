@@ -72,7 +72,7 @@ public class LaserSplitter : Item, IObstacle
 		}
 		else
 		{
-			mesh.material.color = new Color(1f, 1f, 1f, 0.1f);
+			mesh.material.color = new Color(1f, 1f, 1f, 0.6f);
 			mesh.material.SetColor("_EmissionColor", Color.black);
 			if (meshRotateCoroutine != null)
 			{

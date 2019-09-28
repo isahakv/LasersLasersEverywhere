@@ -63,7 +63,7 @@ public class InputController : MonoBehaviour
 		{
 			if (hit.collider.transform.parent.GetComponent<IInteractible>() is IInteractible interactible && interactible != null)
 				GameManager.Instance.OnObjectInteracted(interactible);
-			else if (hit.collider.GetComponent<IPlaceable>() is IPlaceable placeable && placeable != null)
+			else if (hit.collider.transform.parent.GetComponent<IPlaceable>() is IPlaceable placeable && placeable != null)
 				GameManager.Instance.OnObjectInteracted(placeable);
 		}
 	}
