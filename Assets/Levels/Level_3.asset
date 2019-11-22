@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96c63e3b4f9091641994f5f1f23f510c, type: 3}
   m_Name: Level_3
   m_EditorClassIdentifier: 
-  isCompleted: 0
+  isLocked: 1
   gridWidth: 5
   gridHeight: 5
   map:
@@ -62,8 +62,9 @@ MonoBehaviour:
     column: 1
     type: 1
     itemData:
-      type: 0
-      inputColors: []
+      type: 5
+      inputColors:
+      - {r: 1, g: 1, b: 0, a: 1}
       outputColors: []
       direction: {x: 0, y: 0, z: 0}
   - row: 1
@@ -71,7 +72,8 @@ MonoBehaviour:
     type: 1
     itemData:
       type: 0
-      inputColors: []
+      inputColors:
+      - {r: 1, g: 1, b: 0, a: 1}
       outputColors: []
       direction: {x: 0, y: 0, z: 0}
   - row: 1

@@ -28,6 +28,9 @@ public class GameManager : MonoBehaviour
 	public void ResetGameProgress()
 	{
 		PlayerPrefs.SetInt("CurrentLvl", 0);
+		// Lock all levels, except first.
+		for (int i = 1; i < levels.Length; i++)
+			levels[i].isLocked = true;
 		PlayerPrefs.Save();
 	}
 

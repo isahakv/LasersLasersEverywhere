@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class LaserBlock : MonoBehaviour, IObstacle
+public class LaserBlocker : MonoBehaviour, IObstacle
 {
 	public Action OnObjectChanged { get; set; }
 
@@ -12,7 +12,7 @@ public class LaserBlock : MonoBehaviour, IObstacle
 		return true;
 	}
 
-	public void OnLaserHitted(Laser hitedLaser, Vector3 hitPoint, Vector3 hitNormal)
+	public void OnLaserHitted(Laser hittedLaser, Vector3 hitPoint, Vector3 hitNormal)
 	{
 		// return new LaserCheckPoint(hitPoint, Vector3.zero, this, null);
 	}

@@ -59,6 +59,7 @@ public class InputController : MonoBehaviour
 		RaycastHit hit;
 
 		int layerMask = 1 << LayerMask.NameToLayer("Interactible");
+		layerMask |= 1 << LayerMask.NameToLayer("Obstacle");
 		if (Physics.Raycast(ray, out hit, 100f, layerMask))
 		{
 			if (hit.collider.transform.parent.GetComponent<IInteractible>() is IInteractible interactible && interactible != null)

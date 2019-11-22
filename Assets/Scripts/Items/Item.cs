@@ -6,7 +6,8 @@ public enum ItemType
 	Reflector,
 	LaserSplitter,
 	LaserBeamer,
-	LaserAbsorber
+	LaserAbsorber,
+	LaserBlockerDestractible
 }
 
 public class Item : MonoBehaviour, IInteractible

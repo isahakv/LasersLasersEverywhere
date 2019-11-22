@@ -40,7 +40,6 @@ public class LaserObsorber : Item, IObstacle
 
 	public void OnLaserHitted(Laser _hittedLaser, Vector3 hitPoint, Vector3 hitNormal)
 	{
-		Debug.Log("OnLaserHitted: Obsorber: " + _hittedLaser.color.ToString());
 		Color color = _hittedLaser.color;
 		color.a = 1f;
 		if (color == requiredLaserColor)
